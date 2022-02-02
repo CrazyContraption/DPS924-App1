@@ -20,6 +20,10 @@ public class Calculator {
     private static String errorText = "\n";
 
 
+    /**
+     * Pushes am operation with the matching key name provided, does nothing if the name is invalid.
+     * @param value String name of the key we're pushing into the current equation
+     */
     public static void push(String value) {
         try { // Because I really don't trust myself, or anyone else
             KeyTypes key = (KeyTypes.valueOf(value)); // Attempt to cast the string to an enum key
@@ -160,7 +164,7 @@ public class Calculator {
      */
     private static boolean validate(KeyTypes attemptedKey, ArrayList<Operation> operations) { // V2.0, now with less redundant checks xd
         int openBraces = 0;         // Count our opened sub-equations
-        int openMaths = 0;
+        int openMaths = 0;          // Count braces that use commas
         boolean hasDecimal = false; // Flag if a number already has a decimal (prevents entries like 1.22.3)
         String error = "";          // Current error, if any. "" is considered error-less
 
@@ -213,44 +217,6 @@ public class Calculator {
             errorText = "\nERR: " + error + " syntax not valid"; // Format the error
 
         return error == "";
-
-
-        /*if (operations.size() == 0 ) { // Is this the first key we're entering?
-            if (!KeyTypes.canFollow(null, attemptedKey)) // Can the key start off the equation?
-                error = "Operand '" + new Operation(attemptedKey).displayAs + "'";
-        } else { // Mid-equation entry
-            if (KeyTypes.opensBrace(operations.get(0).keyType))
-                openBraces++;
-            for (int opIndex = 0; ; opIndex++) { // Loop through each operand
-                KeyTypes keyLeft = operations.get(opIndex).keyType;
-                KeyTypes keyRight = (opIndex < operations.size() - 1 ? operations.get(opIndex + 1).keyType : attemptedKey);
-
-                if (KeyTypes.opensBrace(keyRight))
-                    openBraces++;
-                else if (keyRight == KeyTypes.keyCloseBrace) {
-                    if (commas > 0)
-                        commas--;
-                    closeBraces++;
-                }
-
-                if (!KeyTypes.isNumber(keyRight))
-                    hasDecimal = false;
-
-                if (keyRight == KeyTypes.keyDecimal && hasDecimal)
-                    error = "Double decimals";
-                else if (keyRight == KeyTypes.keyDecimal)
-                    hasDecimal = true;
-
-                if (closeBraces > openBraces)
-                    error = "Unbalanced braces";
-
-                if (keyRight == KeyTypes.keyComma && commas + 1 > (openBraces - closeBraces))
-                    error = "Unexpected parameter";
-
-                if (error == "" && !KeyTypes.canFollow(keyLeft, keyRight))
-                    error = "Operand '" + new Operation(attemptedKey).displayAs + "'";
-            }
-        }*/
     }
 
     /**
